@@ -1,0 +1,42 @@
+server:
+  port: 10_16
+
+program-agent:
+  charts:
+    bot-message: true
+  client:
+    token: "tuts-token-dew-bot"
+    time-delay-send: 15000
+    host: "https://wds-program-agent.ru/api/"
+    myHost: "http://localhost:1016/api/"
+
+telegram:
+  bot:
+    username: "@fobot"
+    token: "aaaaaaaaa"
+    session:
+      enable: true
+      time-life:
+        chat: 60
+        user: 10
+
+bot:
+  data_base: testbot
+
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/${bot.data_base}
+    username: postgres
+    password: SomePassword1997
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: ru.wdeath.programagent.lib.config.WDSDBDialect
+    open-in-view: false
+    show-sql: true
+    
+
