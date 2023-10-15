@@ -16,11 +16,17 @@ import java.util.stream.Collectors;
 @Service
 public class CalHisCommand {
 
+    private final Repository repository;
+
+    public CalHisCommand(Repository repository) {
+        this.repository = repository;
+    }
+
     @CommandFirst
     public void response(TelegramLongPollingEngine engine, @ParamName("chatId") Long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
-        String text = Repository.repository.stream().map(Objects::toString).collect(Collectors.joining("\n"));
+        String text = repository.findAll().stream().map(Objects::toString).collect(Collectors.joining("\n"));
         sendMessage.setText(text);
         sendMessage.setChatId(chatId);
 

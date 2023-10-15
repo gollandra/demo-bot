@@ -22,18 +22,17 @@ import java.util.Map;
 public class CalCommand {
     public static Map<Long, String> operations = new HashMap<>();
 
+    private final Repository repository;
+
+    public CalCommand(Repository repository) {
+        this.repository = repository;
+    }
+
     @CommandFirst
     public void cal(TelegramLongPollingEngine engine, Message message, @ParamName("chatId") Long chatId, UserBotSession userBotSession) {
         userBotSession.setData(new MathOperation());
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setText("Введите первое число");
-        sendMessage.setChatId(chatId);
         operations.put(chatId, "first number");
-        try {
-            engine.execute(sendMessage);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
+        send(engine, "Введите первое число", chatId);
     }
 
     @CommandOther
@@ -43,7 +42,7 @@ public class CalCommand {
         if (operations.get(chatId).equals("operator")) {
             mathOperation.setOperation(message.getText());
             mathOperation.evaluateExpression();
-            Repository.repository.add(mathOperation);
+            repository.save(mathOperation);
             text = "Ваш результат: " + mathOperation.getResult();
         } else if (operations.get(chatId).equals("first number")) {
             try {
@@ -65,6 +64,10 @@ public class CalCommand {
             }
         }
 
+        send(engine, text, chatId);
+    }
+
+    private void send(TelegramLongPollingEngine engine, String text, Long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(text);
